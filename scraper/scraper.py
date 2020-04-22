@@ -1,7 +1,5 @@
 import csv
 import os
-import re
-
 from bs4 import BeautifulSoup
 import wikipedia
 import requests
@@ -45,10 +43,10 @@ def get_artist_data(artist):
     metrolyrics_artist_url = base_url + artist.replace(' ', '-') + '-lyrics'
     response = requests.get(metrolyrics_artist_url)
     artist_data = {
-                    'artist_url': metrolyrics_artist_url,
-                    'artist_name': artist,
-                    'artist_content': BeautifulSoup(response.content, "html.parser")
-                }
+        'artist_url': metrolyrics_artist_url,
+        'artist_name': artist,
+        'artist_content': BeautifulSoup(response.content, "html.parser")
+    }
     return artist_data
 
 
@@ -83,5 +81,19 @@ def scrape_and_save(artists):
             pass
 
 
-scrape_and_save(get_country_artists())
+def all_lyrics_to_txt():
+    parent_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    lyrics_directory = os.path.join(parent_directory, 'lyric_data')
+    for root, dirs, files in os.walk(lyrics_directory, topdown=False):
+        for file in files:
+            print(os.path.join(root, file))
+            with open(os.path.join(root, file), newline='', encoding='utf-8') as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    print(row['artist'])
+                    with open("combined_files.txt", "a", encoding='utf-8') as txtfile:
+                        if row['lyrics'] != '':
+                            txtfile.write(row['lyrics'])
+
+
 
