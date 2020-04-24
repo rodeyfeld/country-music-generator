@@ -2,10 +2,26 @@ from textgenrnn import textgenrnn
 import os
 
 
-textgen_trainer = textgenrnn()
-textgen_trainer.train_from_file(os.path.join('scraper', 'medium.txt'), num_epochs=4)
+model_cfg = {
+    'rnn_size': 500,
+    'rnn_layers': 12,
+    'rnn_bidirectional': True,
+    'max_length': 15,
+    'max_words': 10000,
+    'dim_embeddings': 100,
+    'word_level': False,
+}
+train_cfg = {
+    'line_delimited': True,
+    'num_epochs': 100,
+    'gen_epochs': 25,
+    'batch_size': 750,
+    'train_size': 0.8,
+    'dropout': 0.0,
+    'max_gen_length': 300,
+    'validation': True,
+    'is_csv': False
+}
 
-textgen = textgenrnn("textgenrnn_weights.hdf5")
-lyrics = textgen.generate(n=20, return_as_list=True)
-for row in lyrics:
-    print(row)
+textgen_trainer = textgenrnn()
+textgen_trainer.train_from_file(os.path.join('scraper', 'combined_files.txt'))

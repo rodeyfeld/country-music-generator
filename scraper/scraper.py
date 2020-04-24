@@ -3,7 +3,7 @@ import os
 from bs4 import BeautifulSoup
 import wikipedia
 import requests
-
+import pandas
 
 # Uses Wikipdia to grab all country artists
 def get_country_artists():
@@ -96,4 +96,26 @@ def all_lyrics_to_txt():
                             txtfile.write(row['lyrics'])
 
 
+def all_lyrics_to_csv():
+    parent_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    lyrics_directory = os.path.join(parent_directory, 'lyric_data')
+    for root, dirs, files in os.walk(lyrics_directory, topdown=False):
+        for file in files:
+            print(os.path.join(root, file))
+            with open(os.path.join(root, file), newline='', encoding='utf-8') as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    with open("combined_files.csv", "a", newline='', encoding='utf-8') as all_csv:
+                        writer = csv.DictWriter(all_csv, fieldnames=['artist', 'lyrics'])
+                        if row['lyrics'] != '':
+                            lyric_string = row['lyrics'].replace("\n", " ")
+                            writer.writerow({'artist': row['artist'], 'lyrics': lyric_string})
 
+
+# def processFirstLine(lyrics, title, row):
+#     lyrics.append(row['lyric'] + '\n')
+#     title.append(row['title'])
+#     return lyrics, title
+
+
+all_lyrics_to_csv()
